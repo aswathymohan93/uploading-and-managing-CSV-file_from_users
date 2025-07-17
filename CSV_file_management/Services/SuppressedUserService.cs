@@ -14,11 +14,11 @@ namespace Job_Layer_Management.Services.Repository
 {
     public class SuppressedUserService : ISuppressedUserService
     {
-        private readonly SuppressedUserRepository _repository;
+        private readonly SuppressedUserRepository Repository;
 
         public SuppressedUserService(IConfiguration configuration)
         {
-            _repository = new SuppressedUserRepository(configuration);
+            Repository = new SuppressedUserRepository(configuration);
         }
 
         public async Task<(bool IsSuccess, string Message)> ProcessCsvAndSaveAsync(IFormFile file)
@@ -71,11 +71,11 @@ namespace Job_Layer_Management.Services.Repository
 
             try
             {
-                int fileId = await _repository.InsertSuppressedFileAsync(file.FileName, savedPath, DateTime.Now);
+                int fileId = await Repository.InsertSuppressedFileAsync(file.FileName, savedPath, DateTime.Now);
 
                 foreach (var user in users)
                 {
-                    await _repository.InsertSuppressedUserAsync(user, fileId);
+                    await Repository.InsertSuppressedUserAsync(user, fileId);
                 }
 
                 return (true, "CSV file processed and saved successfully.");
