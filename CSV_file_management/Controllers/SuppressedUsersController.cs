@@ -34,17 +34,36 @@ namespace CSV_file_management.Controllers
             try
             {
                 if (file == null || file.Length == 0)
+                {
+                    _logger.LogWarning("Upload failed: No file uploaded.");
                     return BadRequest("No file uploaded.");
+                }
+                   
 
                 if (file.Length > 10 * 1024 * 1024)
+                {
+                    _logger.LogWarning("Upload failed: File size exceeds 10MB.");
                     return BadRequest("File size exceeds 10MB.");
+                }
+
+                _logger.LogInformation("Processing file: {FileName}, Size: {Size} bytes", file.FileName, file.Length);
 
                 var result = await _service.ProcessCsvAndSaveAsync(file);
 
-                return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
+                if (result.IsSuccess)
+                {
+                    _logger.LogInformation("File processed successfully: {FileName}", file.FileName);
+                    return Ok(result.Message);
+                }
+                else
+                {
+                    _logger.LogWarning("File processing failed: {Message}", result.Message);
+                    return BadRequest(result.Message);
+                }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An exception occurred while uploading the file.");
                 throw (new Exception("Exception" + ex.Message));
             }
 
