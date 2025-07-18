@@ -23,6 +23,9 @@ namespace Job_Layer_Management.Services.Repository
 
         public async Task<(bool IsSuccess, string Message)> ProcessCsvAndSaveAsync(IFormFile file)
         {
+
+          try
+          {
             var users = new List<SuppressedUserDto>();
 
             using (var reader = new StreamReader(file.OpenReadStream()))
@@ -69,8 +72,7 @@ namespace Job_Layer_Management.Services.Repository
                 await file.CopyToAsync(stream);
             }
 
-            try
-            {
+            
                 int fileId = await Repository.InsertSuppressedFileAsync(file.FileName, savedPath, DateTime.Now);
 
                 foreach (var user in users)
@@ -79,10 +81,10 @@ namespace Job_Layer_Management.Services.Repository
                 }
 
                 return (true, "CSV file processed and saved successfully.");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error saving data: {ex.Message}");
+          }
+          catch (Exception sqlEx)
+          {
+                throw (new Exception("SQL Error: " + sqlEx.Message + sqlEx.StackTrace));
             }
         }
     }

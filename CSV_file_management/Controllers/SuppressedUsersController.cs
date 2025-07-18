@@ -12,10 +12,12 @@ namespace CSV_file_management.Controllers
     public class SuppressedUsersController : ControllerBase
     {
         private readonly ISuppressedUserService _service;
+        private readonly ILogger<SuppressedUsersController> _logger;
 
-        public SuppressedUsersController(ISuppressedUserService service)
+        public SuppressedUsersController(ISuppressedUserService service, ILogger<SuppressedUsersController> logger)
         {
             _service = service;
+            _logger = logger;
         }
 
         /// <summary>
@@ -27,15 +29,25 @@ namespace CSV_file_management.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadSuppressedUsers(IFormFile file)
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("No file uploaded.");
+            _logger.LogInformation("UploadSuppressedUsers endpoint called.");
 
-            if (file.Length > 10 * 1024 * 1024)
-                return BadRequest("File size exceeds 10MB.");
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return BadRequest("No file uploaded.");
 
-            var result = await _service.ProcessCsvAndSaveAsync(file);
+                if (file.Length > 10 * 1024 * 1024)
+                    return BadRequest("File size exceeds 10MB.");
 
-            return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
+                var result = await _service.ProcessCsvAndSaveAsync(file);
+
+                return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
+            }
+            catch (Exception ex)
+            {
+                throw (new Exception("Exception" + ex.Message));
+            }
+
         }
 
 
