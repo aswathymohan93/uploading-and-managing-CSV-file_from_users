@@ -22,7 +22,7 @@ namespace CSV_file_management.Repositry
         public async Task<int> InsertSuppressedFileAsync(string fileName, string filePath, DateTime uploadedOn)
         {
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_InsertSuppressedFile", con)
+            using var cmd = new SqlCommand("AddSuppressedFile", con)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -46,7 +46,7 @@ namespace CSV_file_management.Repositry
         public async Task InsertSuppressedUserAsync(SuppressedUserDto user, int fileId)
         {
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_InsertSuppressedUser", con)
+            using var cmd = new SqlCommand("AddSuppressedUser", con)
             {
                 CommandType = CommandType.StoredProcedure
             };
