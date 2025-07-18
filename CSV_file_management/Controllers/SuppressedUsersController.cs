@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSV_file_management.Controllers
 {
+    /// <summary>
+    /// Controller to handle uploading and processing of suppressed user CSV files.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SuppressedUsersController : ControllerBase
@@ -15,6 +18,11 @@ namespace CSV_file_management.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Uploads a suppressed user CSV file and processes it.
+        /// </summary>
+        /// <param name="file">The CSV file uploaded via multipart/form-data.</param>
+        /// <returns>Returns success or error message depending on processing result.</returns>
         [HttpPost("UploadCSV")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadSuppressedUsers(IFormFile file)
